@@ -12,12 +12,10 @@ RUN dotnet restore "./ShowroomAPI.csproj"
 COPY . .
 WORKDIR "/src/."
 
-RUN dotnet restore "ShowroomAPI.csproj"
-
-RUN dotnet build "ShowroomAPI.csproj" --no-restore -c Release -o /app/build
+RUN dotnet build "./ShowroomAPI.csproj" --no-restore -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ShowroomAPI.csproj" --no-build -c Release -o /app/publish
+RUN dotnet publish "./ShowroomAPI.csproj" --no-build -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
