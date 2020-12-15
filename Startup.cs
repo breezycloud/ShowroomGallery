@@ -36,6 +36,10 @@ namespace ShowroomAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShowroomAPI", Version = "v1" });
             });
+
+            services.AddCors(o => o.AddPolicy("Policy", builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); 
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +52,7 @@ namespace ShowroomAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShowroomAPI v1"));
             }
 
+            app.UseCors("Policy");
             app.UseHttpsRedirection();
 
             app.UseRouting();
