@@ -1,0 +1,17 @@
+name: "CI & CD"
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1      
+      - name: Build and Deploy
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}          
+        run:
+          docker login --username=aminualee02@hotmail.com --password=$HEROKU_API_KEY registry.heroku.com        
+          heroku container: push -a dantunkurashowroomapi web
+          heroku container: release -a dantunkurashowroomapi web          
