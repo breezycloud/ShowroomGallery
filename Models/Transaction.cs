@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 #nullable disable
 
@@ -20,6 +21,7 @@ namespace ShowroomAPI.Models
         public int? StaffId { get; set; }
         public decimal? Discount { get; set; }
         public decimal? SubTotal { get; set; }
+        [JsonIgnore]
         public byte[] Receipt { get; set; }
 
         public virtual ICollection<TransactionDetail> TransactionDetails { get; set; }
