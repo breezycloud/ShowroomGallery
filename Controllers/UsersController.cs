@@ -33,7 +33,7 @@ namespace ShowroomAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<staff>>> Getstaff()
         {
-            return await _context.staff.ToListAsync();
+            return await _context.staff.Include(r => r.UserRole).ToListAsync();
         }
 
         // GET: api/Users/5
