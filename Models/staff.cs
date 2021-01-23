@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -7,6 +8,11 @@ namespace ShowroomAPI.Models
 {
     public partial class staff
     {
+        public staff()
+        {
+            RefreshTokens = new HashSet<RefreshToken>();
+        }
+
         public int StaffId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -15,7 +21,10 @@ namespace ShowroomAPI.Models
         public string ContactNo { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public string Role { get; set; }
+        public int Role { get; set; }
         public bool? Active { get; set; }
+
+        public virtual UserRole UserRole { get; set; }
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

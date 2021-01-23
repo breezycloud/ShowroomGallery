@@ -1,18 +1,19 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using ShowroomAPI.Models;
 
 #nullable disable
 
-namespace ShowroomAPI.Models
+namespace ShowroomAPI.Context
 {
-    public partial class POS_DBContext : DbContext
+    public partial class AppDbContext : DbContext
     {
-        public POS_DBContext()
+        public AppDbContext()
         {
         }
 
-        public POS_DBContext(DbContextOptions<POS_DBContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
@@ -20,10 +21,12 @@ namespace ShowroomAPI.Models
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
         public virtual DbSet<StockIn> StockIns { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
         public virtual DbSet<TransactionDetail> TransactionDetails { get; set; }
         public virtual DbSet<UserPermission> UserPermissions { get; set; }
+        public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<staff> staff { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -94,6 +97,29 @@ namespace ShowroomAPI.Models
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.CategoryNo)
                     .HasConstraintName("FK_Category_Products");
+            });
+
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.TokenId)
+                    .HasName("PK__RefreshT__658FEE8A50080EEC");
+
+                entity.ToTable("RefreshToken");
+
+                entity.Property(e => e.TokenId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("TokenID");
+
+                entity.Property(e => e.ExpiryDate).HasPrecision(0);
+
+                entity.Property(e => e.StaffId).HasColumnName("StaffID");
+
+                entity.Property(e => e.Token).IsRequired();
+
+                entity.HasOne(d => d.Staff)
+                    .WithMany(p => p.RefreshTokens)
+                    .HasForeignKey(d => d.StaffId)
+                    .HasConstraintName("FK__RefreshTo__Staff__29221CFB");
             });
 
             modelBuilder.Entity<StockIn>(entity =>
@@ -184,6 +210,21 @@ namespace ShowroomAPI.Models
                 entity.Property(e => e.UserId).HasColumnName("UserID");
             });
 
+            modelBuilder.Entity<UserRole>(entity =>
+            {
+                entity.HasKey(e => e.RoleId)
+                    .HasName("PK__UserRole__8AFACE3AD62190B0");
+
+                entity.ToTable("UserRole");
+
+                entity.Property(e => e.RoleId).HasColumnName("RoleID");
+
+                entity.Property(e => e.RoleDesc)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasDefaultValueSql("('N/A')");
+            });
+
             modelBuilder.Entity<staff>(entity =>
             {
                 entity.ToTable("Staff");
@@ -191,7 +232,9 @@ namespace ShowroomAPI.Models
                 entity.HasIndex(e => e.StaffId, "UQ__Staff__0000000000000018")
                     .IsUnique();
 
-                entity.Property(e => e.StaffId).HasColumnName("StaffID");
+                entity.Property(e => e.StaffId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("StaffID");
 
                 entity.Property(e => e.Active).HasDefaultValueSql("((1))");
 
@@ -207,9 +250,13 @@ namespace ShowroomAPI.Models
 
                 entity.Property(e => e.Password).HasMaxLength(100);
 
-                entity.Property(e => e.Role).HasMaxLength(100);
-
                 entity.Property(e => e.Username).HasMaxLength(100);
+
+                entity.HasOne(d => d.UserRole)
+                    .WithOne(p => p.staff)
+                    .HasForeignKey<staff>(d => d.StaffId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_Staff_UserRole");
             });
 
             OnModelCreatingPartial(modelBuilder);

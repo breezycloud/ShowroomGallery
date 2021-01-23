@@ -2,20 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShowroomAPI.Context;
 using ShowroomAPI.Models;
 
 namespace ShowroomAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly POS_DBContext _context;
+        private readonly AppDbContext _context;
 
-        public ProductsController(POS_DBContext context)
+        public ProductsController(AppDbContext context)
         {
             _context = context;
         }

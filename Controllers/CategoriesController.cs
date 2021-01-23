@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShowroomAPI.Context;
 using ShowroomAPI.Models;
 
 namespace ShowroomAPI.Controllers
@@ -13,9 +14,9 @@ namespace ShowroomAPI.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly POS_DBContext _context;
+        private readonly AppDbContext _context;
 
-        public CategoriesController(POS_DBContext context)
+        public CategoriesController(AppDbContext context)
         {
             _context = context;
         }
