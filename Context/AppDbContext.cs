@@ -254,7 +254,7 @@ namespace ShowroomAPI.Context
 
                 entity.HasOne(d => d.UserRole)
                     .WithOne(p => p.staff)
-                    .HasForeignKey<staff>(d => d.StaffId)
+                    .HasForeignKey<staff>(d => d.Role)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_Staff_UserRole");
             });
