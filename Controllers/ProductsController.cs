@@ -10,8 +10,7 @@ using ShowroomAPI.Context;
 using ShowroomAPI.Models;
 
 namespace ShowroomAPI.Controllers
-{
-    [Authorize]
+{    
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
