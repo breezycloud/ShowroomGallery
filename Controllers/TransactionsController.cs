@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShowroomAPI.Context;
 using ShowroomAPI.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ShowroomAPI.Controllers
 {
@@ -19,10 +20,12 @@ namespace ShowroomAPI.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public TransactionsController(AppDbContext context)
+        public TransactionsController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: api/Transactions
@@ -50,10 +53,10 @@ namespace ShowroomAPI.Controllers
         }
         [HttpGet("receipt/{receiptNo}")]        
         public async Task<ActionResult<byte[]>> GetReceipt(string receiptNo)
-        {
-            var templatePath = @"Reports/reportReceipt.rdlc";  
-            //var templatePath = $@"{this._webHostEnv.ContentRootPath}\Reports\reportReceipt.rdlc";          
-            var transaction = await _context.Transactions.Include(t => t.TransactionDetails)
+        {            
+            var templatePath = $@"{this._env.ContentRootPath}\Reports\reportReceipt.rdlc";          
+            var transaction = await _context.Transactions.Include(s => s.Staff)
+                                              .Include(t => t.TransactionDetails)
                                               .ThenInclude(p => p.ProductNoNavigation)
                                               .Where(i => i.InvoiceNo == receiptNo)
                                               .FirstOrDefaultAsync();

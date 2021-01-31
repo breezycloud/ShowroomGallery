@@ -29,7 +29,7 @@ namespace ShowroomAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
         }
 
         // GET: api/Products/5
@@ -46,7 +46,7 @@ namespace ShowroomAPI.Controllers
             return product;
         }
 
-        [HttpGet("products")]
+        [HttpGet("report")]
         public async Task<ActionResult<byte[]>> ExportProducts()
         {
             var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
