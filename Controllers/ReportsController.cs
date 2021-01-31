@@ -50,7 +50,7 @@ namespace ShowroomAPI.Controllers
         public async Task<ActionResult<byte[]>> ExportProducts()
         {
             var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
-            var reportData = await GetDataTableAsync(reportOption: "products", products:productList);
+            //var reportData = await GetDataTableAsync(reportOption: "products", products:productList);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Model");
@@ -71,8 +71,9 @@ namespace ShowroomAPI.Controllers
                 productsRow["Cost"] = $"{item.UnitPrice:N}";
                 dt.Rows.Add(productsRow);
             }
+
             var wb = new XLWorkbook();
-            var ws = wb.Worksheets.Add(reportData, "Available Products");
+            var ws = wb.Worksheets.Add(dt, "Available Products");
             ws.Rows().AdjustToContents();
             ws.Columns().AdjustToContents();
             
