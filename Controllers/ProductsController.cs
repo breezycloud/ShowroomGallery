@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +44,45 @@ namespace ShowroomAPI.Controllers
             }
 
             return product;
+        }
+
+        [HttpGet("products")]
+        public async Task<ActionResult<byte[]>> ExportProducts()
+        {
+            var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
+            //var reportData = await GetDataTableAsync(reportOption: "products", products:productList);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Model");
+            dt.Columns.Add("Name");
+            dt.Columns.Add("Description");
+            dt.Columns.Add("Category");
+            dt.Columns.Add("Quantity");
+            dt.Columns.Add("Cost");
+
+            foreach (var item in productList)
+            {
+                DataRow productsRow = dt.NewRow();
+                productsRow["Model"] = item.ModelNo;
+                productsRow["Name"] = item.ProductCode;
+                productsRow["Description"] = item.Description;
+                productsRow["Category"] = item.CategoryNoNavigation.CategoryName;
+                productsRow["Quantity"] = item.StocksOnHand;
+                productsRow["Cost"] = $"{item.UnitPrice:N}";
+                dt.Rows.Add(productsRow);
+            }
+
+            var wb = new XLWorkbook();
+            var ws = wb.Worksheets.Add(dt, "Available Products");
+            ws.Rows().AdjustToContents();
+            ws.Columns().AdjustToContents();
+            
+
+            using var stream = new MemoryStream();
+            wb.SaveAs(stream);
+            var content = stream.ToArray();
+
+            return content;            
         }
 
         // PUT: api/Products/5
