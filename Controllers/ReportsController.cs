@@ -26,8 +26,7 @@ namespace ShowroomAPI.Controllers
             _context = context;
             _webHostEnv = webHostEnv;
         }
-
-        [EnableCors("Policy")]
+        
         [HttpGet("receipt/{receiptNo}")]
         public async Task<IActionResult> GetReceipt(string receiptNo)
         {
@@ -46,14 +45,32 @@ namespace ShowroomAPI.Controllers
             await Task.Delay(0);
             return File(result.MainStream, "application/pdf");
         }
-
-        [EnableCors("Policy")]
+        
         [HttpGet("products")]
         public async Task<ActionResult<byte[]>> ExportProducts()
         {
             var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
             var reportData = await GetDataTableAsync(reportOption: "products", products:productList);
 
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Model");
+            dt.Columns.Add("Name");
+            dt.Columns.Add("Description");
+            dt.Columns.Add("Category");
+            dt.Columns.Add("Quantity");
+            dt.Columns.Add("Cost");
+
+            foreach (var item in productList)
+            {
+                DataRow productsRow = dt.NewRow();
+                productsRow["Model"] = item.ModelNo;
+                productsRow["Name"] = item.ProductCode;
+                productsRow["Description"] = item.Description;
+                productsRow["Category"] = item.CategoryNoNavigation.CategoryName;
+                productsRow["Quantity"] = item.StocksOnHand;
+                productsRow["Cost"] = $"{item.UnitPrice:N}";
+                dt.Rows.Add(productsRow);
+            }
             var wb = new XLWorkbook();
             var ws = wb.Worksheets.Add(reportData, "Available Products");
             ws.Rows().AdjustToContents();
