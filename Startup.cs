@@ -29,6 +29,13 @@ namespace ShowroomAPI
         {
 
             services.AddControllers();    
+            services.AddCors(o => o.AddPolicy("Policy", builder => {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .SetIsOriginAllowed((host) => true);
+            }));
+
              services.AddMvc(option => option.EnableEndpointRouting = false)
                      .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                      .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -64,14 +71,7 @@ namespace ShowroomAPI
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShowroomAPI", Version = "v1" });
-            });
-
-            services.AddCors(o => o.AddPolicy("Policy", builder => {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .SetIsOriginAllowed((host) => true);
-            }));
+            });            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,6 +89,7 @@ namespace ShowroomAPI
             app.UseRouting();
 
             app.UseCors("Policy");
+            app.UseMvc();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
