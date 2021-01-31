@@ -5,18 +5,6 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-# soft link
-RUN ln -s /lib/x86_64-linux-gnu/libdl-2.24.so /lib/x86_64-linux-gnu/libdl.so
-
-# install System.Drawing native dependencies
-RUN apt-get update \
-    && apt-get install -y --allow-unauthenticated \
-   		libgdiplus \
-#         libc6-dev \
-#         libgdiplus \
-#         libx11-dev \
-     && rm -rf /var/lib/apt/lists/*
-
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["ShowroomAPI.csproj", ""]
