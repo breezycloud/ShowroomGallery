@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +47,8 @@ namespace ShowroomAPI.Controllers
             return product;
         }
 
-        [HttpGet("report")]
+        [HttpGet]
+        [Route("report")]
         public async Task<ActionResult<byte[]>> ExportProducts()
         {
             var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
