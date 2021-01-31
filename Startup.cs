@@ -67,7 +67,10 @@ namespace ShowroomAPI
             });
 
             services.AddCors(o => o.AddPolicy("Policy", builder => {
-                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(); 
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()
+                       .SetIsOriginAllowed((host) => true);
             }));
         }
 

@@ -9,6 +9,7 @@ using ClosedXML.Excel;
 using System.Collections.Generic;
 using System.Data;
 using AspNetCore.Reporting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ShowroomAPI.Controllers
 {
@@ -18,15 +19,18 @@ namespace ShowroomAPI.Controllers
     {
 
         private readonly AppDbContext _context;
-        public ReportsController(AppDbContext context)
+        private readonly IWebHostEnvironment _webHostEnv;    
+        public ReportsController(AppDbContext context, IWebHostEnvironment webHostEnv)
         {
             _context = context;
+            _webHostEnv = webHostEnv;
         }
 
         [HttpGet("receipt/{receiptNo}")]
         public async Task<IActionResult> GetReceipt(string receiptNo)
         {
-            var templatePath = @"Reports/reportReceipt.rdlc";
+            var templatePath = @"Reports/reportReceipt.rdlc";  
+            //var templatePath = $@"{this._webHostEnv.ContentRootPath}\Reports\reportReceipt.rdlc";          
             var transaction = await _context.Transactions.Include(t => t.TransactionDetails)
                                               .ThenInclude(p => p.ProductNoNavigation)
                                               .Where(i => i.InvoiceNo == receiptNo)
