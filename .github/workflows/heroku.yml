@@ -11,10 +11,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v1      
-      - name: Login to Heroku
-        run: heroku container:login        
-
-      - name: Build and Push
-        run: heroku container:push -a dantunkurashowroomapi web
-      - name: Deploy
-        run: heroku container:release -a dantunkurashowroomapi web
+      - name: Build and deploy the Docker image      
+        run: |
+          docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+          heroku container:push -a dantunkurashowroomapi web  
+          heroku container:release -a dantunkurashowroomapi web
