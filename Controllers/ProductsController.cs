@@ -49,7 +49,7 @@ namespace ShowroomAPI.Controllers
 
         [HttpGet]
         [Route("report")]
-        public async Task<ActionResult<byte[]>> ExportProducts()
+        public async Task<ActionResult> ExportProducts()
         {
             var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
             //var reportData = await GetDataTableAsync(reportOption: "products", products:productList);
@@ -84,7 +84,9 @@ namespace ShowroomAPI.Controllers
             wb.SaveAs(stream);
             var content = stream.ToArray();
 
-            return content;            
+            return File(content,
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "Product.xlsx");
         }
 
         // PUT: api/Products/5

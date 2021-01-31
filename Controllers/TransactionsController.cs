@@ -53,7 +53,7 @@ namespace ShowroomAPI.Controllers
             return transaction;
         }
         [HttpGet("receipt/{receiptNo}")]        
-        public async Task<ActionResult<byte[]>> GetReceipt(string receiptNo)
+        public async Task<ActionResult> GetReceipt(string receiptNo)
         {
             var templatePath = Path.Combine(_env.ContentRootPath, "Reports", "reportReceipt.rdlc");
                 
@@ -67,9 +67,8 @@ namespace ShowroomAPI.Controllers
 
             LocalReport localReport = new LocalReport(templatePath);
             localReport.AddDataSource("Receipt", reportData);
-            var result = localReport.Execute(RenderType.Pdf, 1, null, "");
-            return result.MainStream;
-            //return File(result.MainStream, "application/pdf");
+            var result = localReport.Execute(RenderType.Pdf, 1, null, "");            
+            return File(result.MainStream, "application/pdf");
         }        
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
