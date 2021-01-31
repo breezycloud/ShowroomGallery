@@ -8,11 +8,21 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v1      
-      - name: Build and deploy the Docker image      
+      - name: Install 7Zip PowerShell Module
+        shell: powershell
         run: |
-          docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-          heroku container:push -a dantunkurashowroomapi web  
-          heroku container:release -a dantunkurashowroomapi web
+          Install-Module Choco -Force -Verbose
+          Install-Choco 
+          choco install heroku-cli --version=7.0.100.0 --force -y
+          refreshenv
+
+      - uses: actions/checkout@v1      
+      - name: Login to Heroku
+        run: heroku container:login  
+
+      - name: Build and Push
+        run: heroku container:push -a dantunkurashowroomapi web
+      - name: Deploy
+        run: heroku container:release -a dantunkurashowroomapi web
