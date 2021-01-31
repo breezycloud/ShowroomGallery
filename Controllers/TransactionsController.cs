@@ -53,8 +53,9 @@ namespace ShowroomAPI.Controllers
         }
         [HttpGet("receipt/{receiptNo}")]        
         public async Task<ActionResult<byte[]>> GetReceipt(string receiptNo)
-        {            
-            var templatePath = $@"{this._env.ContentRootPath}\Reports\reportReceipt.rdlc";          
+        {
+            var templatePath = Path.Combine(_env.ContentRootPath, "Reports", "reportReceipt.rdlc");
+            
             var transaction = await _context.Transactions.Include(s => s.Staff)
                                               .Include(t => t.TransactionDetails)
                                               .ThenInclude(p => p.ProductNoNavigation)
