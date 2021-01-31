@@ -17,7 +17,6 @@ RUN apt-get update \
 #         libx11-dev \
      && rm -rf /var/lib/apt/lists/*
 
-
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["ShowroomAPI.csproj", ""]

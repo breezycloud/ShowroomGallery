@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using ShowroomAPI.Context;
 using ShowroomAPI.Models;
 using Microsoft.AspNetCore.Hosting;
+using System.Reflection;
 
 namespace ShowroomAPI.Controllers
 {
@@ -55,7 +56,7 @@ namespace ShowroomAPI.Controllers
         public async Task<ActionResult<byte[]>> GetReceipt(string receiptNo)
         {
             var templatePath = Path.Combine(_env.ContentRootPath, "Reports", "reportReceipt.rdlc");
-            
+                
             var transaction = await _context.Transactions.Include(s => s.Staff)
                                               .Include(t => t.TransactionDetails)
                                               .ThenInclude(p => p.ProductNoNavigation)
