@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using AspNetCore.Reporting;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Cors;
 
 namespace ShowroomAPI.Controllers
 {
@@ -26,6 +27,7 @@ namespace ShowroomAPI.Controllers
             _webHostEnv = webHostEnv;
         }
 
+        [EnableCors("Policy")]
         [HttpGet("receipt/{receiptNo}")]
         public async Task<IActionResult> GetReceipt(string receiptNo)
         {
@@ -45,6 +47,7 @@ namespace ShowroomAPI.Controllers
             return File(result.MainStream, "application/pdf");
         }
 
+        [EnableCors("Policy")]
         [HttpGet("products")]
         public async Task<IActionResult> ExportProducts()
         {
