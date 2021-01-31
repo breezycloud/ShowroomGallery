@@ -107,8 +107,8 @@ namespace ShowroomAPI.Context
                 entity.ToTable("RefreshToken");
 
                 entity.Property(e => e.TokenId)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnName("TokenID");
+                    .HasColumnName("TokenID")
+                    .HasDefaultValueSql("(newid())");
 
                 entity.Property(e => e.ExpiryDate).HasPrecision(0);
 
@@ -168,6 +168,11 @@ namespace ShowroomAPI.Context
                 entity.Property(e => e.Ttime)
                     .HasColumnType("time(0)")
                     .HasColumnName("TTime");
+
+                entity.HasOne(d => d.Staff)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.StaffId)
+                    .HasConstraintName("FK_Transactions_Staff");
             });
 
             modelBuilder.Entity<TransactionDetail>(entity =>
@@ -255,7 +260,7 @@ namespace ShowroomAPI.Context
                 entity.HasOne(d => d.UserRole)
                     .WithOne(p => p.staff)
                     .HasForeignKey<staff>(d => d.Role)
-                    .OnDelete(DeleteBehavior.Cascade)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Staff_UserRole");
             });
 

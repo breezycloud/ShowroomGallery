@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -11,6 +10,7 @@ namespace ShowroomAPI.Models
         public staff()
         {
             RefreshTokens = new HashSet<RefreshToken>();
+            Transactions = new HashSet<Transaction>();
         }
 
         public int StaffId { get; set; }
@@ -26,5 +26,6 @@ namespace ShowroomAPI.Models
 
         public virtual UserRole UserRole { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

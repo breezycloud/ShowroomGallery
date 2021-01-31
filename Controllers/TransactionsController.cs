@@ -25,7 +25,10 @@ namespace ShowroomAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
         {
-            return await _context.Transactions.ToListAsync();
+            return await _context.Transactions.Include(s => s.Staff)
+                                              .Include(t => t.TransactionDetails)                                               
+                                              .ThenInclude(p => p.ProductNoNavigation)                                              
+                                              .ToListAsync();
         }
 
         // GET: api/Transactions/5
@@ -41,6 +44,7 @@ namespace ShowroomAPI.Controllers
 
             return transaction;
         }
+ 
 
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

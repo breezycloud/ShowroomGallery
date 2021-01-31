@@ -84,7 +84,7 @@ namespace ShowroomAPI
             app.UseCors("Policy");
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthorization();
