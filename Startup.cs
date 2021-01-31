@@ -87,12 +87,7 @@ namespace ShowroomAPI
             }
             
             app.UseHttpsRedirection();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(env.ContentRootPath, "Reports")),
-                RequestPath = "/Report"
-            });
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseCors("Policy");
