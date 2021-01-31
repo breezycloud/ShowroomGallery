@@ -49,7 +49,7 @@ namespace ShowroomAPI.Controllers
 
         [EnableCors("Policy")]
         [HttpGet("products")]
-        public async Task<IActionResult> ExportProducts()
+        public async Task<ActionResult<byte[]>> ExportProducts()
         {
             var productList = await _context.Products.Include(c => c.CategoryNoNavigation).ToListAsync();
             var reportData = await GetDataTableAsync(reportOption: "products", products:productList);
@@ -64,9 +64,10 @@ namespace ShowroomAPI.Controllers
             wb.SaveAs(stream);
             var content = stream.ToArray();
 
-            return File(content,
-                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                         "Products.xlsx");
+            return content;
+            // return File(content,
+                        //  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        //  "Products.xlsx");
         }
 
 

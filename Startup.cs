@@ -83,13 +83,12 @@ namespace ShowroomAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShowroomAPI v1"));
             }
-
-            app.UseCors("Policy");
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
 
+            app.UseCors("Policy");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
