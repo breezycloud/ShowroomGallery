@@ -13,13 +13,9 @@ jobs:
       - name: Install Choco PowerShell Module
         shell: powershell
         run: |
-          #Install Choco Module
-          Install-Module -Name Choco
-          #Install Choco dependencies
+          Install-Module Choco --Force --Verbose
           Install-Choco 
-          #Install Heroku CI
           choco install heroku-cli --version=7.0.100.0 -y
-          #Refresh dev environment
           refreshenv
 
       - uses: actions/checkout@v1      
