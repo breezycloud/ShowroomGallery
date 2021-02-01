@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Install Heroku CLI PowerShell Module
         shell: powershell
-        run: choco install heroku-cli --no-progress
+        run: choco install heroku-cli --no-progress --execution-timeout=0
 
       - uses: actions/checkout@v1
       - name: Login to Heroku
