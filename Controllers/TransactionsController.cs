@@ -13,6 +13,7 @@ using ShowroomAPI.Context;
 using ShowroomAPI.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.Reflection;
+using ClosedXML.Report;
 
 namespace ShowroomAPI.Controllers
 {
@@ -55,20 +56,27 @@ namespace ShowroomAPI.Controllers
         [HttpGet("receipt/{receiptNo}")]        
         public async Task<ActionResult> GetReceipt(string receiptNo)
         {
-            var templatePath = Path.Combine(_env.ContentRootPath, "Reports", "reportReceipt.rdlc");
+            var templatePath = Path.Combine(_env.ContentRootPath, "Reports", "Receipt.xlsx");
                 
             var transaction = await _context.Transactions.Include(s => s.Staff)
                                               .Include(t => t.TransactionDetails)
                                               .ThenInclude(p => p.ProductNoNavigation)
                                               .Where(i => i.InvoiceNo == receiptNo)
                                               .FirstOrDefaultAsync();
-            
-            var reportData = GetDataTableAsync(reportOption:"receipt", model:transaction);
 
-            LocalReport localReport = new LocalReport(templatePath);
-            localReport.AddDataSource("Receipt", reportData);
-            var result = localReport.Execute(RenderType.Pdf, 1, null, "");            
-            return File(result.MainStream, "application/pdf");
+            var order = GetOrder(transaction);
+
+            var template = new XLTemplate(templatePath);
+            template.AddVariable(order);
+            template.Generate();
+
+            using var ms = new MemoryStream();
+            template.SaveAs(ms);
+
+            var result = ms.ToArray();
+            
+            return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+                    $"Receipt {transaction.InvoiceNo}.xlsx");
         }        
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -133,60 +141,30 @@ namespace ShowroomAPI.Controllers
             return _context.Transactions.Any(e => e.Id == id);
         }
 
-        public static DataTable GetDataTableAsync(string reportOption, IEnumerable<Product> products =null, Transaction model = null)
+        public Order GetOrder(Transaction transaction)
         {
-            DataTable dt = new DataTable();
-            switch (reportOption)
+            Order order = new Order
             {
-                case "receipt":                    
-                    dt.Columns.Add("InvoiceNo");
-                    dt.Columns.Add("TDate");
-                    dt.Columns.Add("Quantity");
-                    dt.Columns.Add("ProductCode");
-                    dt.Columns.Add("ItemAmount");
-                    dt.Columns.Add("TotalAmount");
-                    dt.Columns.Add("SubTotal");
-                    dt.Columns.Add("Discount");
-                    dt.Columns.Add("StaffName");
-                    
-                    DataRow row = dt.NewRow();
-                    row["InvoiceNo"] = model.InvoiceNo;
-                    row["TDate"] = model.Tdate.ToShortDateString();
-                    foreach (var transactionDetail in model.TransactionDetails)
-                    {                        
-                        row["Quantity"] = transactionDetail.Quantity;
-                        row["ProductCode"] = transactionDetail.ProductNoNavigation.ProductCode;
-                        row["ItemAmount"] = $"{transactionDetail.ItemPrice:N}";
-                    }
-                    row["TotalAmount"] = $"{model.TotalAmount:N}";
-                    row["SubTotal"] = $"{model.SubTotal:N}";
-                    row["Discount"] = $"{model.Discount:N}";
-                    row["StaffName"] = $"{model.Staff.FirstName} {model.Staff.LastName}";
-                    dt.Rows.Add(row);
-                    break;
-
-                case "products":
-                    dt.Columns.Add("Model");
-                    dt.Columns.Add("Name");
-                    dt.Columns.Add("Description");
-                    dt.Columns.Add("Category");
-                    dt.Columns.Add("Quantity");
-                    dt.Columns.Add("Cost");
-
-                    foreach (var item in products)
-                    {
-                        DataRow productsRow = dt.NewRow();
-                        productsRow["Model"] = item.ModelNo;
-                        productsRow["Name"] = item.ProductCode;
-                        productsRow["Description"] = item.Description;
-                        productsRow["Category"] = item.CategoryNoNavigation.CategoryName;
-                        productsRow["Quantity"] = item.StocksOnHand;
-                        productsRow["Cost"] = $"{item.UnitPrice:N}";
-                        dt.Rows.Add(productsRow);
-                    }
-                    break;
+                InvoiceNo = transaction.InvoiceNo,
+                OrderDate = transaction.Tdate.ToShortDateString(),
+                Cashier = transaction.Staff.FirstName,
+                TotalAmount = transaction.TotalAmount,
+                SubTotal = transaction.SubTotal,
+                Discount = transaction.Discount
+            };
+            foreach (var item in transaction.TransactionDetails)
+            {
+                OrderItems orderItems = new OrderItems()
+                {
+                    Quantity = item.Quantity,
+                    ProductName = item.ProductNoNavigation.ProductCode,
+                    ItemPrice = item.ItemPrice
+                };
+                order.OrderItems.Add(orderItems);
             }            
-            return dt;
+
+
+            return order;
         }
     }
 }

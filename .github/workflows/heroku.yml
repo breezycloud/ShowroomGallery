@@ -8,20 +8,14 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
-    steps:
-      - name: Install Heroku CLI PowerShell Module
-        shell: powershell
-        run: choco install heroku-cli --no-progress --execution-timeout=0
-
+    runs-on: ubuntu-latest
+    steps:  
       - uses: actions/checkout@v1
       - name: Login to Heroku
-        shell: powershell
         run: heroku container:login
 
       - name: Build and Push
-        shell: powershell
         run: heroku container:push -a dantunkurashowroomapi web
+
       - name: Deploy
-        shell: powershell
         run: heroku container:release -a dantunkurashowroomapi web  
