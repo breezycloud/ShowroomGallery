@@ -11,7 +11,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["ShowroomAPI.csproj", ""]
-RUN dotnet restore "./ShowroomAPI.csproj"
+RUN dotnet restore "./ShowroomAPI.csproj" --disable-parallel
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "ShowroomAPI.csproj" -c Release -o /app/build
