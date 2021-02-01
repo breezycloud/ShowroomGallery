@@ -12,20 +12,8 @@ jobs:
     steps:
       - name: Install curl module
         shell: powershell
-        run: choco install curl
-      
-      - name: Install Heroku CLI PowerShell Module        
-        shell: powershell
-        run: curl https://cli-assets.heroku.com/install.sh | sh
+        run: choco install curl --no-progress
 
-      - uses: actions/checkout@v1      
-      - name: Login to Heroku
+      - name: Testing WSL
         shell: powershell
-        run: heroku container:login  
-
-      - name: Build and Push
-        shell: powershell
-        run: heroku container:push -a dantunkurashowroomapi web
-      - name: Deploy
-        shell: powershell
-        run: heroku container:release -a dantunkurashowroomapi web
+        run: wsl      
