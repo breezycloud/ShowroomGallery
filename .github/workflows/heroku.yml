@@ -10,11 +10,13 @@ jobs:
   build:
     runs-on: windows-2019
     steps:
-      - name: Install Heroku CLI PowerShell Module
+      - name: Install curl module
         shell: powershell
-        run: |
-          choco install heroku-cli --version=7.0.100.0
-          refreshenv
+        run: choco install curl
+      
+      - name: Install Heroku CLI PowerShell Module        
+        shell: powershell
+        run: curl https://cli-assets.heroku.com/install.sh | sh
 
       - uses: actions/checkout@v1      
       - name: Login to Heroku
