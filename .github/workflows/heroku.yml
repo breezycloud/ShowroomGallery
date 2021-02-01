@@ -10,10 +10,18 @@ jobs:
   build:
     runs-on: windows-2019
     steps:
-      - name: Install curl module
+      - name: Install Heroku CLI PowerShell Module
         shell: powershell
-        run: choco install curl --no-progress
+        run: choco install heroku-cli --no-progress
 
-      - name: Testing WSL
+      - uses: actions/checkout@v1
+      - name: Login to Heroku
         shell: powershell
-        run: wsl      
+        run: heroku container:login
+
+      - name: Build and Push
+        shell: powershell
+        run: heroku container:push -a dantunkurashowroomapi web
+      - name: Deploy
+        shell: powershell
+        run: heroku container:release -a dantunkurashowroomapi web  
