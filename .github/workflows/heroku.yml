@@ -10,12 +10,13 @@ jobs:
   build:
     runs-on: windows-2019
     steps:
-      - name: Install 7Zip PowerShell Module
+      - name: Install Choco PowerShell Module
         shell: powershell
         run: |
-          Install-Module Choco -Force -Verbose
+          #Installing Choco
+          Install-Module Choco -y 
           Install-Choco 
-          choco install heroku-cli --version=7.0.100.0 --force -y
+          choco install heroku-cli --version=7.0.100.0 -y
           refreshenv
 
       - uses: actions/checkout@v1      
