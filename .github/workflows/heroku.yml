@@ -10,19 +10,20 @@ jobs:
   build:
     runs-on: windows-2019
     steps:
-      - name: Install Choco PowerShell Module
+      - name: Install Heroku CLI PowerShell Module
         shell: powershell
         run: |
-          Install-Module Choco -Force -Verbose
-          Install-Choco 
-          choco install heroku-cli --version=7.0.100.0 -y
+          choco install heroku-cli --version=7.0.100.0
           refreshenv
 
       - uses: actions/checkout@v1      
       - name: Login to Heroku
+        shell: powershell
         run: heroku container:login  
 
       - name: Build and Push
+        shell: powershell
         run: heroku container:push -a dantunkurashowroomapi web
       - name: Deploy
+        shell: powershell
         run: heroku container:release -a dantunkurashowroomapi web
