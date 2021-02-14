@@ -32,10 +32,10 @@ namespace ShowroomAPI
 
             services.AddControllers();    
             services.AddCors(o => o.AddPolicy("Policy", builder => {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .SetIsOriginAllowed((host) => true);
+                builder.AllowAnyHeader().WithOrigins("https://localhost:5001",
+                                    "https://localhost:44302",
+                                    "https://dantunkuragallery.herokuapp.com")
+                       .WithMethods("GET", "PUT", "DELETE", "POST");                       
             }));
 
              services.AddMvc(option => option.EnableEndpointRouting = false)
