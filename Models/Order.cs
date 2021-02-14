@@ -8,9 +8,10 @@ namespace ShowroomAPI.Models
     public class Order
     {
         public Order()
-        {
+        {            
             OrderItems = new List<OrderItems>();
         }
+
         public string InvoiceNo { get; set; }
         public string OrderDate { get; set; }
         public string Cashier { get; set; }

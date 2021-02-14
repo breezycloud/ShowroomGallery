@@ -17,8 +17,8 @@ namespace ShowroomAPI.Models
         public string ProductCode { get; set; }
         public string Description { get; set; }
         public string Barcode { get; set; }
-        public decimal? UnitPrice { get; set; }
-        public double? StocksOnHand { get; set; }
+        public decimal UnitPrice { get; set; }
+        public double StocksOnHand { get; set; }
         public int? ReorderLevel { get; set; }
         public Guid? CategoryNo { get; set; }
         public string ModelNo { get; set; }

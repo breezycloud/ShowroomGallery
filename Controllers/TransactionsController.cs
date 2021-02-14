@@ -1,19 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCore.Reporting;
-using ClosedXML.Excel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShowroomAPI.Context;
 using ShowroomAPI.Models;
 using Microsoft.AspNetCore.Hosting;
-using System.Reflection;
 using ClosedXML.Report;
+using System;
 
 namespace ShowroomAPI.Controllers
 {
@@ -53,6 +49,7 @@ namespace ShowroomAPI.Controllers
 
             return transaction;
         }
+
         [HttpGet("receipt/{receiptNo}")]        
         public async Task<ActionResult> GetReceipt(string receiptNo)
         {
@@ -77,7 +74,8 @@ namespace ShowroomAPI.Controllers
             
             return File(result, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
                     $"Receipt {transaction.InvoiceNo}.xlsx");
-        }        
+        }     
+        
         // PUT: api/Transactions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -141,7 +139,7 @@ namespace ShowroomAPI.Controllers
             return _context.Transactions.Any(e => e.Id == id);
         }
 
-        public Order GetOrder(Transaction transaction)
+        private Order GetOrder(Transaction transaction)
         {
             Order order = new Order
             {
@@ -166,5 +164,39 @@ namespace ShowroomAPI.Controllers
 
             return order;
         }
+
+        private List<Order> GetOrder(List<Transaction> transaction)
+        {
+            List<Order> orders = new List<Order>();
+
+            foreach (var item in transaction)
+            {
+                Order order = new Order
+                {
+                    InvoiceNo = item.InvoiceNo,
+                    OrderDate = item.Tdate.ToShortDateString(),
+                    Cashier = item.Staff.FirstName,
+                    TotalAmount = item.TotalAmount,
+                    SubTotal = item.SubTotal,
+                    Discount = item.Discount
+
+                };
+                orders.Add(order);
+                foreach (var o in item.TransactionDetails)
+                {
+                    OrderItems orderItems = new OrderItems()
+                    {
+                        Quantity = o.Quantity,
+                        ProductName = o.ProductNoNavigation.ProductCode,
+                        ItemPrice = o.ItemPrice
+                    };
+                    order.OrderItems.Add(orderItems);
+                }
+            }
+
+
+            return orders;
+        }
+
     }
 }

@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace ShowroomAPI.Models
 {
-    public class OrderItems
+    public class Stocks
     {
+        public string Date { get; set; }
+        public string ProductCode { get; set; }
         public double Quantity { get; set; }
-        public string ProductName { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal ItemPrice { get; set; }
     }
 }
